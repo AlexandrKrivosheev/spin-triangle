@@ -12,4 +12,4 @@ const gameLoop = new GameLoop({ ctx, fps });
 gameLoop.start();
 
 const triangle = new Triangle({ ctx });
-gameLoop.addToUpdate(triangle.draw);
+gameLoop.addToUpdate(triangle.update);

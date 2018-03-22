@@ -6,11 +6,16 @@ export default class Triangle {
     this.topPoint = { x: 0, y: 0 };
     this.leftPoint = { x: 0, y: 0 };
     this.rigthPoint = { x: 0, y: 0 };
-    this._calcCoordinates();
-    this.draw = this.draw.bind(this);
+
+    this.update = this.update.bind(this);
   }
 
-  draw() {
+  update() {
+    this._calcCoordinates();
+    this._draw();
+  }
+
+  _draw() {
     this.ctx.beginPath();
     this.ctx.moveTo(this.topPoint.x, this.topPoint.y);
     this.ctx.lineTo(this.leftPoint.x, this.leftPoint.y);
