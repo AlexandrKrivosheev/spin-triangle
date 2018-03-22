@@ -9,7 +9,7 @@ window.addEventListener("resize", () => resizeCanvas(canvasEl));
 
 const ctx = canvas.getContext("2d");
 const gameLoop = new GameLoop({ ctx, fps });
-console.log(gameLoop);
-// gameLoop.start();
+gameLoop.start();
 
 const triangle = new Triangle({ ctx });
+gameLoop.addToUpdate(triangle.draw);

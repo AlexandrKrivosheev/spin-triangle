@@ -6,6 +6,8 @@ export default class GameLoop {
     this.lastTime = new Date().getTime();
     this.currentTime = 0;
     this.delta = 0;
+
+    this.start = this.start.bind(this);
   }
 
   /**
@@ -18,7 +20,7 @@ export default class GameLoop {
     this.delta = this.currentTime - this.lastTime;
 
     if (this.delta > this.interval) {
-      for (let i = this.toUpdate.length; i >= 0; i--) {
+      for (let i = 0; i < this.toUpdate.length; i++) {
         this.toUpdate[i]();
       }
       this.lastTime = this.currentTime - this.delta % this.interval;
