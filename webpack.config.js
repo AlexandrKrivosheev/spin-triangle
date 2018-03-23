@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
     app: "./src/app.js"
   },
@@ -9,7 +9,7 @@ module.exports = {
     filename: "app.js",
     path: path.resolve(__dirname, "public")
   },
-  devtool: "inline-source-map",
+  // devtool: "inline-source-map",
   devServer: {
     contentBase: "./public"
   },
