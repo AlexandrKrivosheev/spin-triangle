@@ -1,1 +1,1 @@
-export const fps = 60;
+export const fps = 10;
