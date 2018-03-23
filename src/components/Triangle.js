@@ -1,14 +1,14 @@
-import { getPointerCoordinates } from "../helpers";
+import Pointer from "../core/Pointer";
 
 export default class Triangle {
   constructor({ ctx }) {
     this.ctx = ctx;
+    this.pointer = Pointer.getInstance(ctx);
     this.height = 100;
     this.sideWidth = 110;
     this.topPoint = { x: 0, y: 0 };
     this.leftPoint = { x: 0, y: 0 };
     this.rightPoint = { x: 0, y: 0 };
-
     this._calcCoordinates();
 
     this.update = this.update.bind(this);
@@ -76,8 +76,11 @@ export default class Triangle {
     let rx = this.topPoint.x - centerX;
     let ry = this.topPoint.y - centerY;
 
-    let newTopPointX = centerX + rx * Math.cos(alpha) - ry * Math.sin(alpha);
-    let newTopPointY = centerY + rx * Math.sin(alpha) + ry * Math.cos(alpha);
+    let sin = Math.sin(alpha);
+    let cos = Math.cos(alpha);
+
+    let newTopPointX = centerX + rx * cos - ry * sin;
+    let newTopPointY = centerY + rx * sin + ry * cos;
 
     return { newTopPointX, newTopPointY };
   }
@@ -96,14 +99,18 @@ export default class Triangle {
     const x1 = this.ctx.canvas.width / 2;
     const y1 = this.ctx.canvas.height / 2;
 
-    const { x, y } = getPointerCoordinates();
+    const x2 = this.pointer.x;
+    const y2 = this.pointer.y;
 
-    const pointerVectorX = x - x1;
-    const pointerVectorY = y - y1;
+    const pointerVectorX = x2 - x1;
+    const pointerVectorY = y2 - y1;
+
     return { pointerVectorX, pointerVectorY };
   }
 
-  // return angle between top point and pointer from canvas center
+  /**
+   * Return angle points should move on
+   */
   _getAngle() {
     const { topPointVectorX, topPointVectorY } = this._getTopPointVector();
     const { pointerVectorX, pointerVectorY } = this._getPointerVector();
@@ -121,10 +128,17 @@ export default class Triangle {
     const cosAngle =
       dotProduct / (topPointVectorMagnitude * pointerVectorMagnitude);
 
-    console.log(Math.acos(cosAngle).toFixed(2));
-    return Math.acos(cosAngle).toFixed(2);
+    let rad = Math.acos(cosAngle).toFixed(2);
+
+    if (!this.pointer.isMoveClockwise()) {
+      rad = -rad;
+    }
+    return rad;
   }
 
+  /**
+   * Calculates first coordinates
+   */
   _calcCoordinates() {
     let centerX = this.ctx.canvas.width / 2;
     let centerY = this.ctx.canvas.height / 2;
