@@ -31,17 +31,17 @@ export default class Triangle {
   _calcPoints() {
     const angle = this._getAngle();
     const { newTopPointX, newTopPointY } = this._calcTopPoint(angle);
-    // const { newLeftPointX, newLeftPointY } = this._calcLeftPoint(angle);
-    // const { newRightPointX, newRightPointY } = this._calcRightPoint(angle);
+    const { newLeftPointX, newLeftPointY } = this._calcLeftPoint(angle);
+    const { newRightPointX, newRightPointY } = this._calcRightPoint(angle);
 
     this.topPoint.x = newTopPointX;
     this.topPoint.y = newTopPointY;
 
-    // this.leftPoint.x = newLeftPointX;
-    // this.leftPoint.y = newLeftPointY;
+    this.leftPoint.x = newLeftPointX;
+    this.leftPoint.y = newLeftPointY;
 
-    // this.rightPoint.x = newRightPointX;
-    // this.rightPoint.y = newRightPointY;
+    this.rightPoint.x = newRightPointX;
+    this.rightPoint.y = newRightPointY;
   }
 
   _calcRightPoint(alpha) {
@@ -82,19 +82,47 @@ export default class Triangle {
     return { newTopPointX, newTopPointY };
   }
 
-  // return angle between top point and pointer from canvas center
-  _getAngle() {
+  _getTopPointVector() {
+    const x1 = this.ctx.canvas.width / 2;
+    const y1 = this.ctx.canvas.height / 2;
+
+    const topPointVectorX = this.topPoint.x - x1;
+    const topPointVectorY = this.topPoint.y - y1;
+
+    return { topPointVectorX, topPointVectorY };
+  }
+
+  _getPointerVector() {
+    const x1 = this.ctx.canvas.width / 2;
+    const y1 = this.ctx.canvas.height / 2;
+
     const { x, y } = getPointerCoordinates();
 
-    const centerX = this.ctx.canvas.width / 2;
-    const centerY = this.ctx.canvas.height / 2;
+    const pointerVectorX = x - x1;
+    const pointerVectorY = y - y1;
+    return { pointerVectorX, pointerVectorY };
+  }
 
-    const vectorSum = x * centerX + y * centerY;
-    const vectorsMagnitude1 = Math.sqrt(x ** 2 + y ** 2);
-    const vectorsMagnitude2 = Math.sqrt(centerX ** 2 + centerY ** 2);
-    let angleCos = vectorSum / (vectorsMagnitude1 * vectorsMagnitude2);
+  // return angle between top point and pointer from canvas center
+  _getAngle() {
+    const { topPointVectorX, topPointVectorY } = this._getTopPointVector();
+    const { pointerVectorX, pointerVectorY } = this._getPointerVector();
 
-    return Math.acos(angleCos).toFixed(2);
+    const dotProduct =
+      topPointVectorX * pointerVectorX + topPointVectorY * pointerVectorY;
+
+    const topPointVectorMagnitude = Math.sqrt(
+      topPointVectorX ** 2 + topPointVectorY ** 2
+    );
+    const pointerVectorMagnitude = Math.sqrt(
+      pointerVectorX ** 2 + pointerVectorY ** 2
+    );
+
+    const cosAngle =
+      dotProduct / (topPointVectorMagnitude * pointerVectorMagnitude);
+
+    console.log(Math.acos(cosAngle).toFixed(2));
+    return Math.acos(cosAngle).toFixed(2);
   }
 
   _calcCoordinates() {
