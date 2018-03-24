@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "wds": "webpack-dev-server",
-    "build": "webpack"
+    "wds": "webpack-dev-server --mode development",
+    "build": "webpack --mode production --devtool false"
   },
   "author": "",
   "license": "ISC",
