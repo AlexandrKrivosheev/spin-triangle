@@ -1,15 +1,28 @@
 import Pointer from "../core/Pointer";
+import {
+  calcCathetus,
+  calcTurnCoordinatesByAngle,
+  calcAngleByCosTheory,
+  calcSideByCosTheory
+} from "../helpers";
 
 export default class Triangle {
   constructor({ ctx }) {
     this.ctx = ctx;
     this.pointer = Pointer.getInstance(ctx);
-    this.height = 100;
     this.sideWidth = 110;
+    this.bottomWidth = 50;
     this.topPoint = { x: 0, y: 0 };
     this.leftPoint = { x: 0, y: 0 };
     this.rightPoint = { x: 0, y: 0 };
-    this._calcCoordinates();
+    this.center = {
+      x: this.ctx.canvas.width / 2,
+      y: this.ctx.canvas.height / 2
+    };
+
+    this.height = calcCathetus(this.sideWidth, this.bottomWidth / 2);
+    // Angle between 2/3 height and 2/3 small median
+    this.medianAngle = this._calcMedianAngle();
 
     this.update = this.update.bind(this);
   }
@@ -29,131 +42,82 @@ export default class Triangle {
   }
 
   _calcPoints() {
-    const angle = this._getAngle();
-    const { newTopPointX, newTopPointY } = this._calcTopPoint(angle);
-    const { newLeftPointX, newLeftPointY } = this._calcLeftPoint(angle);
-    const { newRightPointX, newRightPointY } = this._calcRightPoint(angle);
-
-    this.topPoint.x = newTopPointX;
-    this.topPoint.y = newTopPointY;
-
-    this.leftPoint.x = newLeftPointX;
-    this.leftPoint.y = newLeftPointY;
-
-    this.rightPoint.x = newRightPointX;
-    this.rightPoint.y = newRightPointY;
+    this._calcTopPoint();
+    this._calcLeftPoint();
+    this._calcRightPoint();
   }
 
-  _calcRightPoint(alpha) {
-    const centerX = this.ctx.canvas.width / 2;
-    const centerY = this.ctx.canvas.height / 2;
-
-    let rx = this.rightPoint.x - centerX;
-    let ry = this.rightPoint.y - centerY;
-
-    let newRightPointX = centerX + rx * Math.cos(alpha) - ry * Math.sin(alpha);
-    let newRightPointY = centerY + rx * Math.sin(alpha) + ry * Math.cos(alpha);
-
-    return { newRightPointX, newRightPointY };
-  }
-  _calcLeftPoint(alpha) {
-    const centerX = this.ctx.canvas.width / 2;
-    const centerY = this.ctx.canvas.height / 2;
-
-    let rx = this.leftPoint.x - centerX;
-    let ry = this.leftPoint.y - centerY;
-
-    let newLeftPointX = centerX + rx * Math.cos(alpha) - ry * Math.sin(alpha);
-    let newLeftPointY = centerY + rx * Math.sin(alpha) + ry * Math.cos(alpha);
-
-    return { newLeftPointX, newLeftPointY };
-  }
-
-  _calcTopPoint(alpha) {
-    const centerX = this.ctx.canvas.width / 2;
-    const centerY = this.ctx.canvas.height / 2;
-
-    let rx = this.topPoint.x - centerX;
-    let ry = this.topPoint.y - centerY;
-
-    let sin = Math.sin(alpha);
-    let cos = Math.cos(alpha);
-
-    let newTopPointX = centerX + rx * cos - ry * sin;
-    let newTopPointY = centerY + rx * sin + ry * cos;
-
-    return { newTopPointX, newTopPointY };
-  }
-
-  _getTopPointVector() {
-    const x1 = this.ctx.canvas.width / 2;
-    const y1 = this.ctx.canvas.height / 2;
-
-    const topPointVectorX = this.topPoint.x - x1;
-    const topPointVectorY = this.topPoint.y - y1;
-
-    return { topPointVectorX, topPointVectorY };
-  }
-
-  _getPointerVector() {
-    const x1 = this.ctx.canvas.width / 2;
-    const y1 = this.ctx.canvas.height / 2;
-
+  _calcTopPoint() {
+    const x1 = this.center.x;
+    const y1 = this.center.y;
     const x2 = this.pointer.x;
     const y2 = this.pointer.y;
+    // width from triangle center to pointer
+    const toPointerWidth = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    // 2/3 median  is radius
+    const radius = this.height / 3 * 2;
+    const delta = radius / (toPointerWidth - radius);
+    // calculate top point coordinates
+    this.topPoint.x = (x1 + delta * x2) / (1 + delta);
+    this.topPoint.y = (y1 + delta * y2) / (1 + delta);
+  }
 
-    const pointerVectorX = x2 - x1;
-    const pointerVectorY = y2 - y1;
+  _calcLeftPoint() {
+    const angle360InRad = 6.28319;
 
-    return { pointerVectorX, pointerVectorY };
+    const turnAngle = angle360InRad - this.medianAngle;
+
+    const x1 = this.center.x;
+    const y1 = this.center.y;
+    const x2 = this.topPoint.x;
+    const y2 = this.topPoint.y;
+
+    const { x, y } = calcTurnCoordinatesByAngle(
+      turnAngle,
+      { x1, y1 },
+      { x2, y2 }
+    );
+
+    this.leftPoint.x = x;
+    this.leftPoint.y = y;
+  }
+
+  _calcRightPoint() {
+    const turnAngle = this.medianAngle;
+    const x1 = this.center.x;
+    const y1 = this.center.y;
+    const x2 = this.topPoint.x;
+    const y2 = this.topPoint.y;
+
+    const { x, y } = calcTurnCoordinatesByAngle(
+      turnAngle,
+      { x1, y1 },
+      { x2, y2 }
+    );
+
+    this.rightPoint.x = x;
+    this.rightPoint.y = y;
   }
 
   /**
-   * Return angle points should move on
+   * Angle between 2/3 height and 2/3 small median
    */
-  _getAngle() {
-    const { topPointVectorX, topPointVectorY } = this._getTopPointVector();
-    const { pointerVectorX, pointerVectorY } = this._getPointerVector();
+  _calcMedianAngle() {
+    const topAngle =
+      calcAngleByCosTheory(this.bottomWidth, this.sideWidth, this.sideWidth) /
+      2;
 
-    const dotProduct =
-      topPointVectorX * pointerVectorX + topPointVectorY * pointerVectorY;
-
-    const topPointVectorMagnitude = Math.sqrt(
-      topPointVectorX ** 2 + topPointVectorY ** 2
-    );
-    const pointerVectorMagnitude = Math.sqrt(
-      pointerVectorX ** 2 + pointerVectorY ** 2
+    // 2/3 small median  is small radius
+    const smallRadius = calcSideByCosTheory(
+      topAngle,
+      this.height / 3 * 2,
+      this.sideWidth
     );
 
-    const cosAngle =
-      dotProduct / (topPointVectorMagnitude * pointerVectorMagnitude);
-
-    let rad = Math.acos(cosAngle).toFixed(2);
-
-    if (!this.pointer.isMoveClockwise()) {
-      rad = -rad;
-    }
-    return rad;
-  }
-
-  /**
-   * Calculates first coordinates
-   */
-  _calcCoordinates() {
-    let centerX = this.ctx.canvas.width / 2;
-    let centerY = this.ctx.canvas.height / 2;
-
-    this.topPoint.x = centerX;
-    this.topPoint.y = centerY - this.height / 3 * 2;
-    // Piphagor theory
-    let cathetus = this.height;
-    let hypotenuse = this.sideWidth;
-    let cathetus2 = Math.sqrt(hypotenuse ** 2 - cathetus ** 2);
-
-    this.leftPoint.x = this.topPoint.x - cathetus2;
-    this.leftPoint.y = this.topPoint.y + hypotenuse;
-
-    this.rightPoint.x = this.topPoint.x + cathetus2;
-    this.rightPoint.y = this.topPoint.y + hypotenuse;
+    return calcAngleByCosTheory(
+      this.sideWidth,
+      this.height / 3 * 2,
+      smallRadius
+    );
   }
 }
