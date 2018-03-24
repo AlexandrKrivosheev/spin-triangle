@@ -2,6 +2,6 @@
 
 https://youtu.be/yg_e23ABOc0
 
-# Solution
+# Live Solution
 
 https://alexandrkrivosheev.github.io/spin-triangle/
