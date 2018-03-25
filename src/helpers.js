@@ -2,8 +2,10 @@ export function resizeCanvas(canvasEl) {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
+  /* eslint-disable no-param-reassign */
   canvasEl.width = width;
   canvasEl.height = height;
+  /* eslint-enable */
 }
 
 /**
