@@ -1,11 +1,11 @@
-import { resizeCanvas, setPointerCoordinates } from './helpers';
+import { resizeCanvas } from './helpers';
 import { fps } from './config';
 import GameLoop from './core/GameLoop';
 import Pointer from './core/Pointer';
 import Triangle from './components/Triangle';
 
 const canvasEl = document.querySelector('#canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvasEl.getContext('2d');
 const Poiner = Pointer.getInstance(ctx);
 
 resizeCanvas(canvasEl);
