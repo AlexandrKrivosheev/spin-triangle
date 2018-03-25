@@ -1,19 +1,27 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
   entry: {
-    app: "./src/app.js"
+    app: './src/app.js',
   },
   output: {
-    filename: "app.js",
-    path: path.resolve(__dirname, "public")
+    filename: 'app.js',
+    path: path.resolve(__dirname, 'public'),
   },
-  devtool: "inline-source-map",
+  devtool: 'inline-source-map',
   devServer: {
-    contentBase: "./public"
+    contentBase: './public',
   },
 
   module: {
-    rules: [{ test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }]
-  }
+    rules: [
+      {
+        enforce: 'pre',
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'eslint-loader',
+      },
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
+    ],
+  },
 };

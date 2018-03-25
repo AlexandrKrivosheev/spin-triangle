@@ -21,7 +21,7 @@ export default class GameLoop {
 
     if (this.delta > this.interval) {
       this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      for (let i = 0; i < this.toUpdate.length; i++) {
+      for (let i = 0; i < this.toUpdate.length; i += 1) {
         this.toUpdate[i]();
       }
       this.lastTime = this.currentTime - this.delta % this.interval;

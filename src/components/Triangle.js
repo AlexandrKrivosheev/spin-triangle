@@ -1,10 +1,10 @@
-import Pointer from "../core/Pointer";
+import Pointer from '../core/Pointer';
 import {
   calcCathetus,
   calcTurnCoordinatesByAngle,
   calcAngleByCosTheory,
-  calcSideByCosTheory
-} from "../helpers";
+  calcSideByCosTheory,
+} from '../helpers';
 
 export default class Triangle {
   constructor({ ctx }) {
@@ -17,7 +17,7 @@ export default class Triangle {
     this.rightPoint = { x: 0, y: 0 };
     this.center = {
       x: this.ctx.canvas.width / 2,
-      y: this.ctx.canvas.height / 2
+      y: this.ctx.canvas.height / 2,
     };
 
     this.height = calcCathetus(this.sideWidth, this.bottomWidth / 2);
@@ -75,7 +75,7 @@ export default class Triangle {
     const { x, y } = calcTurnCoordinatesByAngle(
       turnAngle,
       { x1, y1 },
-      { x2, y2 }
+      { x2, y2 },
     );
 
     this.leftPoint.x = x;
@@ -92,7 +92,7 @@ export default class Triangle {
     const { x, y } = calcTurnCoordinatesByAngle(
       turnAngle,
       { x1, y1 },
-      { x2, y2 }
+      { x2, y2 },
     );
 
     this.rightPoint.x = x;
@@ -111,13 +111,13 @@ export default class Triangle {
     const smallRadius = calcSideByCosTheory(
       topAngle,
       this.height / 3 * 2,
-      this.sideWidth
+      this.sideWidth,
     );
 
     return calcAngleByCosTheory(
       this.sideWidth,
       this.height / 3 * 2,
-      smallRadius
+      smallRadius,
     );
   }
 }

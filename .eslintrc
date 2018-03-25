@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb-base",
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true
+  },
+  "rules": {
+    "no-mixed-operators": ["off"],
+    "import/prefer-default-export": ["off"]
+  }
+}
