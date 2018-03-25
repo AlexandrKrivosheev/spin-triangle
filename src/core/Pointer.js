@@ -1,15 +1,14 @@
 let PointerInstance = null;
 
 export default class Pointer {
-  constructor(ctx) {
+  constructor() {
     this.x = 0;
     this.y = 0;
-    this.ctx = ctx;
   }
 
-  static getInstance(ctx) {
+  static getInstance() {
     if (!PointerInstance) {
-      PointerInstance = new this(ctx);
+      PointerInstance = new this();
     }
     return PointerInstance;
   }

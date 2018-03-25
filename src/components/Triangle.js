@@ -9,7 +9,7 @@ import {
 export default class Triangle {
   constructor({ ctx }) {
     this.ctx = ctx;
-    this.pointer = Pointer.getInstance(ctx);
+    this.pointer = Pointer.getInstance();
     this.sideWidth = 110;
     this.bottomWidth = 50;
     this.topPoint = { x: 0, y: 0 };

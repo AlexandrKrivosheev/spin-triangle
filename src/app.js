@@ -6,7 +6,7 @@ import Triangle from './components/Triangle';
 
 const canvasEl = document.querySelector('#canvas');
 const ctx = canvasEl.getContext('2d');
-const Poiner = Pointer.getInstance(ctx);
+const Poiner = Pointer.getInstance();
 
 resizeCanvas(canvasEl);
 window.addEventListener('resize', () => resizeCanvas(canvasEl));
